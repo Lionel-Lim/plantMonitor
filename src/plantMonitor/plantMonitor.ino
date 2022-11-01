@@ -24,7 +24,6 @@ float DHTValue = -1; //initial value of DHT22 sensor
 float Moisture = 1; // initial value just in case web page is loaded before readMoisture called
 int sensorVCC = 13;
 int blueLED = 2;
-//Remove below
 float Temperature;
 float Humidity;
 
@@ -96,31 +95,41 @@ void setup() {
 }
 
 void loop() {
-  //Bebug purpose
+  //handler for receiving requests to webserver
+  server.handleClient();
+  //Bebug purpose. run every 2 secs
   if (debugMode){
+    float t = readDHT22(1);
+    float h = readDHT22(2);
+    float m = readMoisture(0);
     client.publish(topicAddress, WiFi.localIP().toString().c_str());
-    //Display DHT22 Values
-    Serial.print("Temp:"); Serial.print(readDHT22(1)); Serial.print(", ");
-    Serial.print("Humid:"); Serial.print(readDHT22(2)); Serial.print(", ");
-    Serial.print("SoilMoist:"); Serial.print(readMoisture(0)); Serial.print(", ");
+    Serial.print("Temp:"); Serial.print(t); Serial.print(", ");
+    Serial.print("Humid:"); Serial.print(h); Serial.print(", ");
+    Serial.print("SoilMoist:"); Serial.print(m); Serial.print(", ");
     Serial.println();
-    sendMQTT_n("Temperature", readDHT22(1));
-    sendMQTT_n("Humidity", readDHT22(2));
-    sendMQTT_n("Moisture", readMoisture(0));
-    // sendMQTT();
+    sendMQTT_n("Temperature", t);
+    sendMQTT_n("Humidity", h);
+    sendMQTT_n("Moisture", m);
     delay(2000);
     client.loop();
   }else{
-    // handler for receiving requests to webserver
-    server.handleClient();
-
     if (minuteChanged()) {
-      readMoisture(1);
-      sendMQTT();
       Serial.println(GB.dateTime("H:i:s")); // UTC.dateTime("l, d-M-y H:i:s.v T")
+      client.publish(topicAddress, WiFi.localIP().toString().c_str());
+      //Display DHT22 Values
+      float t = readDHT22(1);
+      float h = readDHT22(2);
+      float m = readMoisture(0);
+      Serial.print("Temp:"); Serial.print(t); Serial.print(", ");
+      Serial.print("Humid:"); Serial.print(h); Serial.print(", ");
+      Serial.print("SoilMoist:"); Serial.print(m); Serial.print(", ");
+      Serial.println();
+      sendMQTT_n("Temperature", t);
+      sendMQTT_n("Humidity", h);
+      sendMQTT_n("Moisture", m);
+      delay(2000);
+      client.loop();
     }
-
-    client.loop();
   }
 }
 
@@ -137,7 +146,9 @@ float readMoisture(int mode){
   digitalWrite(blueLED, HIGH);
   delay(100);
   if(mode == 0){
-    return map(moist, 1, 1024, 0, 100);
+    Serial.println(moist);
+    return tanh(map(moist, 1, 500, 0, 3)) * 100;
+    // return map(moist, 1, 1024, 0, 100);
   }else{
     return moist;
   };
@@ -341,32 +352,32 @@ void startWebserver() {
 void handle_OnConnect() {
   Temperature = dht.readTemperature(); // Gets the values of the temperature
   Humidity = dht.readHumidity(); // Gets the values of the humidity
-  // server.send(200, "text/html", SendHTML(Temperature, Humidity, Moisture));
-  server.send(200, "text/plain", "Hello world!");
+  server.send(200, "text/html", SendHTML(readDHT22(1), readDHT22(2), readMoisture(0)));
 }
 
 void handle_NotFound() {
   server.send(404, "text/plain", "Not found");
 }
 
-String SendHTML(float Temperaturestat, float Humiditystat, int Moisturestat) {
+String SendHTML(float Temperaturestat, float Humiditystat, float Moisturestat) {
   String ptr = "<!DOCTYPE html> <html>\n";
   ptr += "<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no\">\n";
-  ptr += "<title>ESP8266 DHT22 Report</title>\n";
+  ptr += "<title>DY Plant Monitor</title>\n";
   ptr += "<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}\n";
   ptr += "body{margin-top: 50px;} h1 {color: #444444;margin: 50px auto 30px;}\n";
   ptr += "p {font-size: 24px;color: #444444;margin-bottom: 10px;}\n";
   ptr += "</style>\n";
   ptr += "</head>\n";
   ptr += "<body>\n";
+  ptr += "<img src='https://www.google.com/url?sa=i&url=https%3A%2F%2Fgiphy.com%2Fexplore%2Fnot-quite-my-tempo&psig=AOvVaw180Ig-_XHSeR7B_uK__uLo&ust=1667406159464000&source=images&cd=vfe&ved=0CAwQjRxqFwoTCLidy5CyjfsCFQAAAAAdAAAAABAE' alt='Need Water Face'>\n";
   ptr += "<div id=\"webpage\">\n";
   ptr += "<h1>ESP8266 Huzzah DHT22 Report</h1>\n";
 
   ptr += "<p>Temperature: ";
-  ptr += (int)Temperaturestat;
+  ptr += Temperaturestat;
   ptr += " C</p>";
   ptr += "<p>Humidity: ";
-  ptr += (int)Humiditystat;
+  ptr += Humiditystat;
   ptr += "%</p>";
   ptr += "<p>Moisture: ";
   ptr += Moisturestat;
