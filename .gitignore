@@ -1,0 +1,5 @@
+
+arduino_secrets.h
+.DS_Store
+src/plantMonitor/.vscode/settings.json
+src/plantMonitor/.vscode/c_cpp_properties.json
