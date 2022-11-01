@@ -369,7 +369,6 @@ String SendHTML(float Temperaturestat, float Humiditystat, float Moisturestat) {
   ptr += "</style>\n";
   ptr += "</head>\n";
   ptr += "<body>\n";
-  ptr += "<img src='https://www.google.com/url?sa=i&url=https%3A%2F%2Fgiphy.com%2Fexplore%2Fnot-quite-my-tempo&psig=AOvVaw180Ig-_XHSeR7B_uK__uLo&ust=1667406159464000&source=images&cd=vfe&ved=0CAwQjRxqFwoTCLidy5CyjfsCFQAAAAAdAAAAABAE' alt='Need Water Face'>\n";
   ptr += "<div id=\"webpage\">\n";
   ptr += "<h1>ESP8266 Huzzah DHT22 Report</h1>\n";
 
@@ -382,6 +381,11 @@ String SendHTML(float Temperaturestat, float Humiditystat, float Moisturestat) {
   ptr += "<p>Moisture: ";
   ptr += Moisturestat;
   ptr += "</p>";
+  if(Moisturestat < 0.5){
+    ptr += "<img src='https://raw.githubusercontent.com/Lionel-Lim/plantMonitor/main/src/img/notGood.gif' alt='Need Water Face'>\n";
+  }else{
+    
+  }
   ptr += "<p>Sampled on: ";
   ptr += GB.dateTime("l,");
   ptr += "<br>";
