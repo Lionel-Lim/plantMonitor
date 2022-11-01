@@ -107,30 +107,29 @@ void loop() {
     Serial.print("Humid:"); Serial.print(h); Serial.print(", ");
     Serial.print("SoilMoist:"); Serial.print(m); Serial.print(", ");
     Serial.println();
-    sendMQTT_n("Temperature", t);
-    sendMQTT_n("Humidity", h);
-    sendMQTT_n("Moisture", m);
+    sendMQTT("Temperature", t);
+    sendMQTT("Humidity", h);
+    sendMQTT("Moisture", m);
     delay(2000);
-    client.loop();
   }else{
     if (minuteChanged()) {
       Serial.println(GB.dateTime("H:i:s")); // UTC.dateTime("l, d-M-y H:i:s.v T")
       client.publish(topicAddress, WiFi.localIP().toString().c_str());
-      //Display DHT22 Values
-      float t = readDHT22(1);
-      float h = readDHT22(2);
-      float m = readMoisture(0);
+      float t = readDHT22(1); //Get Temperature
+      float h = readDHT22(2); //Get Humidity
+      float m = readMoisture(0); //Get normalised Moisture
       Serial.print("Temp:"); Serial.print(t); Serial.print(", ");
       Serial.print("Humid:"); Serial.print(h); Serial.print(", ");
       Serial.print("SoilMoist:"); Serial.print(m); Serial.print(", ");
       Serial.println();
-      sendMQTT_n("Temperature", t);
-      sendMQTT_n("Humidity", h);
-      sendMQTT_n("Moisture", m);
+      //Send collecting data to MQTT
+      sendMQTT("Temperature", t);
+      sendMQTT("Humidity", h);
+      sendMQTT("Moisture", m);
       delay(2000);
-      client.loop();
     }
   }
+  client.loop();
 }
 
 //Read the Moisture sensor and return value
@@ -147,8 +146,8 @@ float readMoisture(int mode){
   delay(100);
   if(mode == 0){
     Serial.println(moist);
-    return tanh(map(moist, 1, 500, 0, 3)) * 100;
-    // return map(moist, 1, 1024, 0, 100);
+    return tanh(map(moist, 1, 500, 0, 3)) * 100; //For General
+    // return tanh(map(moist, 1, 300, 0, 3)) * 100; //For winter season
   }else{
     return moist;
   };
@@ -226,23 +225,22 @@ void syncDate() {
   Serial.println("London time: " + GB.dateTime());
 }
 
-bool sendMQTT_n(char* topic, float value) {
+bool sendMQTT(char* topic, float value) {
   if (!client.connected()) {
     reconnect();
   }
   client.loop();
-  if(isRepeated(topic, value)){
+  if(isRepeated(topic, value)){ //Check whether the same value was sent just before
     Serial.print(topic);
     Serial.println(" - Same Value Detected.");
     return false;
   }else{
-    dtostrf(value, 7, 2, msg); 
-    // snprintf (msg, 50, "%.1f", value);
+    dtostrf(value, 7, 2, msg); //Change float type to char type
     char sendingAddress[20];
-    strcpy(sendingAddress, topicAddress);
+    strcpy(sendingAddress, topicAddress); //Get MQTT address and save
     strcat(sendingAddress, "/");
-    strcat(sendingAddress, topic);
-    client.publish(sendingAddress, msg);
+    strcat(sendingAddress, topic);  //append topic in the address
+    client.publish(sendingAddress, msg);  //Send to MQTT
     return true;
   }
 }
@@ -270,33 +268,6 @@ bool isRepeated(char* topic, float value){
       return false;
     }
   }
-}
-
-void sendMQTT() {
-
-  if (!client.connected()) {
-    reconnect();
-  }
-  client.loop();
-
-  Temperature = dht.readTemperature(); // Gets the values of the temperature
-  snprintf (msg, 50, "%.1f", Temperature);
-  Serial.print("Publish message for t: ");
-  Serial.println(msg);
-  client.publish("student/CASA0014/plant/ucfnimx/temperature", msg);
-
-  Humidity = dht.readHumidity(); // Gets the values of the humidity
-  snprintf (msg, 50, "%.0f", Humidity);
-  Serial.print("Publish message for h: ");
-  Serial.println(msg);
-  client.publish("student/CASA0014/plant/ucfnimx/humidity", msg);
-
-  //Moisture = analogRead(soilPin);   // moisture read by readMoisture function
-  snprintf (msg, 50, "%.0i", Moisture);
-  Serial.print("Publish message for m: ");
-  Serial.println(msg);
-  client.publish("student/CASA0014/plant/ucfnimx/moisture", msg);
-
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -370,21 +341,30 @@ String SendHTML(float Temperaturestat, float Humiditystat, float Moisturestat) {
   ptr += "</head>\n";
   ptr += "<body>\n";
   ptr += "<div id=\"webpage\">\n";
-  ptr += "<h1>ESP8266 Huzzah DHT22 Report</h1>\n";
-
+  ptr += "<h1>DY Plant Monitor</h1>\n";
   ptr += "<p>Temperature: ";
   ptr += Temperaturestat;
   ptr += " C</p>";
+  if(Temperaturestat < 20){
+    ptr += "<img src='https://raw.githubusercontent.com/Lionel-Lim/plantMonitor/main/src/img/t_bad.gif' alt='More Temperature Meme'>\n";
+  }else{
+    ptr += "<img src='https://raw.githubusercontent.com/Lionel-Lim/plantMonitor/main/src/img/t_Good.gif' alt='Enough Temperature Meme'>\n";
+  }
   ptr += "<p>Humidity: ";
   ptr += Humiditystat;
   ptr += "%</p>";
+  if(Humiditystat < 45){
+    ptr += "<img src='https://raw.githubusercontent.com/Lionel-Lim/plantMonitor/main/src/img/h_bad.gif' alt='Need Water Meme'>\n";
+  }else{
+    ptr += "<img src='https://raw.githubusercontent.com/Lionel-Lim/plantMonitor/main/src/img/h_Good.gif' alt='Need Water Meme'>\n";
+  }
   ptr += "<p>Moisture: ";
   ptr += Moisturestat;
   ptr += "</p>";
   if(Moisturestat < 0.5){
-    ptr += "<img src='https://raw.githubusercontent.com/Lionel-Lim/plantMonitor/main/src/img/notGood.gif' alt='Need Water Face'>\n";
+    ptr += "<img src='https://raw.githubusercontent.com/Lionel-Lim/plantMonitor/main/src/img/m_notGood.gif' alt='Need Water Meme'>\n";
   }else{
-    
+    ptr += "<img src='https://raw.githubusercontent.com/Lionel-Lim/plantMonitor/main/src/img/m_Good.gif' alt='Need Water Meme'>\n";
   }
   ptr += "<p>Sampled on: ";
   ptr += GB.dateTime("l,");
