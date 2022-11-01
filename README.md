@@ -44,11 +44,11 @@ Some points are important :
 
 - Need to check light spectrum and trend.
 
-3. Often watering required but not in winter season.
+2. Often watering required but not in winter season.
 
 - Measuring Moisture level in the soil need a change.
 
-5. Require adequate amount of  Humidity.
+3. Require adequate amount of  Humidity.
 
 -  Need to check Humidity level and be between 40~60 %.
 
@@ -60,9 +60,9 @@ Two sensors(DHT22 and a pair of nails) are used in this project. Some sensors in
 
 - The sensor collects temperature and humidity data every two seconds.
 
-1. A pair of nails
+2. A pair of nails
 
-- The sensor collects resistivity data of the soil. when one nail put 5V to soil, another nail detect it. If a moisture level of the soil is high, the electricity can easily flow between one nail to another and it shows high value.
+- The sensor collects resistivity data of the soil. when one nail put 3.3V to soil, another nail detect it. If a moisture level of the soil is high, the electricity can easily flow between one nail to another and it shows high value.
 
 ## 4\. For the future development
 
