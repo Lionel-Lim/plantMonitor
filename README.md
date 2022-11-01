@@ -7,7 +7,7 @@
 ![work in progress](src/img/inWorking.jpeg)
 ## 1\. Project Overview
 The project is developing the plant monitor collecting and visualising the factors affecting growth.  I will monitor [Ficus microcarpa Moclame](https://www.rhs.org.uk/plants/164300/ficus-microcarpa-moclame-(pbr)/details) using various components, for example, [Adafruit](https://learn.adafruit.com/adafruit-feather-huzzah-esp8266/overview) [Feather Huzzah ESP8266](https://learn.adafruit.com/adafruit-feather-huzzah-esp8266/overview)(Control Board), [DHT22](https://learn.adafruit.com/dht/overview)(Temperature & Humidity Sensor), [a pair of nails](https://www.instructables.com/Moisture-Detection-With-Two-Nails/) and so on. The collected data from the plant and soil will be sent to CASA [MQTT](https://en.wikipedia.org/wiki/MQTT) server, stored in [InfluxDB](https://en.wikipedia.org/wiki/InfluxDB) and visualised on [Grafana](https://en.wikipedia.org/wiki/Grafana).
-![data process](src/img/process.png)
+![data process](src/img/Process.png)
   
 
 ## 2\. Understanding How Plant Grow
