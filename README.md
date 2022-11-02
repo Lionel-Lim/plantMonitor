@@ -76,6 +76,11 @@ Plant use light for _photosynthesis_ **but** there are specific light spectru
 ![active radiation](src/img/ActiveRadiation.png)
 
 I am testing [Adafruit AS7341](https://www.adafruit.com/product/4698) to collect light spectrum. It support 10 channels light sensing from 415 nm to 680 nm. The range is covering the target range but the **sensor is not accurate** comparing to professional equipment. **However, It is capable to check the trend of light spectrum.**
+
+Also, the measured values can be calculated in Normalized difference vegetation index(NDVI) index.(Not exactly the same becuase NIR and Red are hard to get using this sensor.)
+$${\displaystyle {{NDVI}}={\frac {({{NIR}}-{{Red}})}{({{NIR}}+{{Red}})}}}$$
+@thanks to [Dhruv](https://github.com/drvkmr)
+
 ![as7341 image](src/img/as7341.png)
 ![light spectrum test result](src/img/lightSpectrum.png)
 ### \- External Display
@@ -434,7 +439,7 @@ bool isRepeated(char* topic, float value){
   ptr += "</p>";
 
 ```
-
+![local Webserver Sample](src/img/Webserver.jpg)
   
 
   
@@ -472,3 +477,5 @@ Virtual Plant Monitor displaying live MQTT data.
 [casa0014/plantMonitor at main · ucl-casa-ce/casa0014 (github.com)](https://github.com/ucl-casa-ce/casa0014/tree/main/plantMonitor)
 
 [09: WebGL and WebXR (cetools.org)](https://workshops.cetools.org/codelabs/CASA0017-week-09/index.html?index=..%2F..index#12)
+
+[Normalized difference vegetation wikipedia](https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index)
