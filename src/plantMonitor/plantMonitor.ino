@@ -21,7 +21,7 @@
 uint8_t DHTPin = 12;        // on Pin 2 of the Huzzah
 uint8_t soilPin = 0;      // ADC or A0 pin on Huzzah
 float DHTValue = -1; //initial value of DHT22 sensor
-float Moisture = 1; // initial value just in case web page is loaded before readMoisture called
+float Moisture = -1; // initial value just in case web page is loaded before readMoisture called
 int sensorVCC = 13;
 int blueLED = 2;
 float Temperature;
@@ -371,6 +371,8 @@ String SendHTML(float Temperaturestat, float Humiditystat, float Moisturestat) {
   ptr += "<br>";
   ptr += GB.dateTime("d-M-y H:i:s T");
   ptr += "</p>";
+
+  ptr += "<a href='http://stud-pi-ucfnimx.local:3000/d/igi5QrHVk/ce-plant-monitor?orgId=1&from=1667293541845&to=1667379941845&viewPanel=2'>Today I Was...</a>";
 
   ptr += "</div>\n";
   ptr += "</body>\n";

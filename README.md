@@ -2,9 +2,9 @@
 
 ### Ficus microcarpa moclame
 
+![live](src/img/Main.jpg)
 * * *
 
-![work in progress](src/img/inWorking.jpeg)
 ## 1\. Project Overview
 The project is developing the plant monitor collecting and visualising the factors affecting growth.  I will monitor [Ficus microcarpa Moclame](https://www.rhs.org.uk/plants/164300/ficus-microcarpa-moclame-(pbr)/details) using various components, for example, [Adafruit](https://learn.adafruit.com/adafruit-feather-huzzah-esp8266/overview) [Feather Huzzah ESP8266](https://learn.adafruit.com/adafruit-feather-huzzah-esp8266/overview)(Control Board), [DHT22](https://learn.adafruit.com/dht/overview)(Temperature & Humidity Sensor), [a pair of nails](https://www.instructables.com/Moisture-Detection-With-Two-Nails/) and so on. The collected data from the plant and soil will be sent to CASA [MQTT](https://en.wikipedia.org/wiki/MQTT) server, stored in [InfluxDB](https://en.wikipedia.org/wiki/InfluxDB) and visualised on [Grafana](https://en.wikipedia.org/wiki/Grafana).
 ![data process](src/img/Process.png)
@@ -44,9 +44,11 @@ Some points are important :
 
 - Need to check light spectrum and trend.
 
-2. Often watering required but not in winter season.
+2. Watering required often but not in winter season.
 
 - Measuring Moisture level in the soil need a change.
+- Watering required when the top surface of the soil is dry.
+- In winter season, when the soil is generally dry
 
 3. Require adequate amount of  Humidity.
 
@@ -63,6 +65,8 @@ Two sensors(DHT22 and a pair of nails) are used in this project. Some sensors in
 2. A pair of nails
 
 - The sensor collects resistivity data of the soil. when one nail put 3.3V to soil, another nail detect it. If a moisture level of the soil is high, the electricity can easily flow between one nail to another and it shows high value.
+
+![work in progress](src/img/inWorking.jpeg)
 
 ## 4\. For the future development
 
@@ -103,8 +107,16 @@ Also, the collected data is not accessible without a device(Mobile Phone, Comput
 ![Parts on the desk](src/img/parts.jpeg)
 
 ### 5-2. Wiring
+#### Used pins
+- 3V 
+- GND
+- ADC
+- SPI MOSI = GPIO #13
+- SPI MISO = GPIO #12
+- 
 The image is without the shield and enclosure and it is not limited to the image.
-![wiring guidline](src/img/wiring.png)
+![wiring guidline](src/img/wiring.png) https://workshops.cetools.org/codelabs/CASA0014-2-Plant-Monitor/index.html
+
 
 ### 5-3 . Sensing 
 
