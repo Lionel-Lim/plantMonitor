@@ -43,6 +43,7 @@ Some points are important :
 1. Need a lot of amount of light but it need gradual changes instead of sudden change.
 
 - Need to check light spectrum and trend.
+- 800 - 10000 Lux and 21 ~ 25°C are best conditions.
 
 2. Watering required often but not in winter season.
 
