@@ -439,6 +439,7 @@ bool isRepeated(char* topic, float value){
   ptr += "</p>";
 
 ```
+![MQTT data](src/img/MQTT.png)
 ![local Webserver Sample](src/img/Webserver.jpg)
   
 
